@@ -1,0 +1,4 @@
+name: PlayerListAPI
+main: org.betamc.api.PlayerListAPI
+version: 1.0.0
+author: zavdav
