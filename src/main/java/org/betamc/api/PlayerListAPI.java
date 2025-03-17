@@ -1,12 +1,18 @@
 package org.betamc.api;
 
 import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsServer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
-import java.io.IOException;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.InetSocketAddress;
+import java.security.KeyStore;
 
 public class PlayerListAPI extends JavaPlugin {
 
@@ -14,20 +20,46 @@ public class PlayerListAPI extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Configuration config = getConfiguration();
-        config.load();
-        int port = config.getInt("port", 8080);
+        getConfiguration().load();
+        String route = getConfiguration().getString("route", "/api/players");
+        String protocol = getConfiguration().getString("protocol", "http").toUpperCase();
+        int port = getConfiguration().getInt("port", 8080);
+        getConfiguration().save();
 
         try {
-            server = HttpServer.create(new InetSocketAddress(port), 0);
-        } catch (IOException e) {
+            if (protocol.equals("HTTPS")) {
+                server = HttpsServer.create(new InetSocketAddress(port), 0);
+                setupHttpsServer((HttpsServer) server);
+            } else {
+                server = HttpServer.create(new InetSocketAddress(port), 0);
+            }
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
 
-        config.save();
-        server.createContext("/playerlist", new PlayerListHandler());
+        server.createContext(route, new PlayerListHandler());
         server.start();
         Bukkit.getLogger().info("[" + getDescription().getName() + "] Server is listening on port " + port);
+    }
+
+    private void setupHttpsServer(HttpsServer server) throws Exception {
+        getConfiguration().load();
+        char[] password = getConfiguration().getString("keystore_password", "changethis").toCharArray();
+        getConfiguration().save();
+
+        KeyStore ks = KeyStore.getInstance("JKS");
+        FileInputStream fis = new FileInputStream(new File(getDataFolder(), "keystore.jks"));
+        ks.load(fis, password);
+
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+        kmf.init(ks, password);
+
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+        tmf.init(ks);
+
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+        server.setHttpsConfigurator(new HttpsConfigurator(context));
     }
 
     @Override
