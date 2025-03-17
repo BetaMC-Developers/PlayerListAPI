@@ -19,6 +19,10 @@
             <id>johnymuffin-nexus-releases</id>
             <url>https://repository.johnymuffin.com/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <build>
@@ -46,6 +50,11 @@
             <groupId>com.legacyminecraft.poseidon</groupId>
             <artifactId>poseidon-craftbukkit</artifactId>
             <version>1.1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.zavdav</groupId>
+            <artifactId>ZCore</artifactId>
+            <version>1.0.0-rc1</version>
         </dependency>
     </dependencies>
 
