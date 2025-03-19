@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.InetSocketAddress;
 import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerListAPI extends JavaPlugin {
 
@@ -24,6 +26,8 @@ public class PlayerListAPI extends JavaPlugin {
         String route = getConfiguration().getString("route", "/api/players");
         String protocol = getConfiguration().getString("protocol", "http").toUpperCase();
         int port = getConfiguration().getInt("port", 8080);
+        List<String> apiKeys = getConfiguration().getStringList("apiKeys", new ArrayList<String>(){{ add("changethis"); }});
+        getConfiguration().setProperty("apiKeys", apiKeys);
         getConfiguration().save();
 
         try {
@@ -37,7 +41,7 @@ public class PlayerListAPI extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        server.createContext(route, new PlayerListHandler());
+        server.createContext(route, new PlayerListHandler(apiKeys));
         server.start();
         Bukkit.getLogger().info("[" + getDescription().getName() + "] Server is listening on port " + port);
     }
