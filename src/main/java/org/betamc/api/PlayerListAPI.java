@@ -4,6 +4,8 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -22,6 +24,8 @@ public class PlayerListAPI extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        getCommand("reloadpla").setExecutor(this);
+
         getConfiguration().load();
         String route = getConfiguration().getString("route", "/api/players");
         String protocol = getConfiguration().getString("protocol", "http").toUpperCase();
@@ -70,5 +74,12 @@ public class PlayerListAPI extends JavaPlugin {
     public void onDisable() {
         server.stop(0);
         Bukkit.getLogger().info("[" + getDescription().getName() + "] Server has been stopped");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        onDisable();
+        onEnable();
+        return true;
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>org.betamc.api</groupId>
     <artifactId>PlayerListAPI</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -18,10 +18,6 @@
         <repository>
             <id>johnymuffin-nexus-releases</id>
             <url>https://repository.johnymuffin.com/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -55,6 +51,8 @@
             <groupId>com.github.zavdav</groupId>
             <artifactId>ZCore</artifactId>
             <version>1.0.0-rc1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ZCore-1.0.0-rc1.jar</systemPath>
         </dependency>
     </dependencies>
 

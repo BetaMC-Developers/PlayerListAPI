@@ -2,3 +2,8 @@ name: PlayerListAPI
 main: org.betamc.api.PlayerListAPI
 version: ${project.version}
 author: zavdav
+
+commands:
+  reloadpla:
+    description: Reloads the PlayerListAPI plugin.
+    usage: /reloadpla
